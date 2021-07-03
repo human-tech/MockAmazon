@@ -5,20 +5,14 @@ import 'package:amazon/blocs/credentials_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class AuthPage extends StatefulWidget {
+class AuthPage extends StatelessWidget {
   const AuthPage({Key? key}) : super(key: key);
 
-  @override
-  _AuthPageState createState() => _AuthPageState();
-}
-
-class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     final repository =
         context.select((FirebaseUserRepository repository) => repository);
     final authBloc = BlocProvider.of<AuthenticationBloc>(context);
-
     return Scaffold(
       body: BlocProvider(
         create: (_) => CredentialsBloc(
@@ -29,46 +23,29 @@ class _AuthPageState extends State<AuthPage> {
   }
 }
 
-class AuthForm extends StatefulWidget {
+class AuthForm extends StatelessWidget {
   const AuthForm({Key? key}) : super(key: key);
 
   @override
-  _AuthFormState createState() => _AuthFormState();
-}
-
-class _AuthFormState extends State<AuthForm> {
-  @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, data) {
-        var baseWidth = 200.0;
-
-        if (data.maxWidth >= baseWidth) {
-          baseWidth = data.maxWidth / 1.4;
-        }
-
-        return Center(
-          child: SingleChildScrollView(
-            child: _AuthForm(baseWidth),
-          ),
-        );
-      },
+    return Center(
+      child: SingleChildScrollView(
+        child: const _AuthForm(),
+      ),
     );
   }
 }
 
 class _AuthForm extends StatefulWidget {
-  final double baseWidth;
-
-  const _AuthForm(this.baseWidth, {Key? key}) : super(key: key);
+  const _AuthForm({Key? key}) : super(key: key);
 
   @override
   __AuthFormState createState() => __AuthFormState();
 }
 
 class __AuthFormState extends State<_AuthForm> {
-  final _formkey = GlobalKey<FormState>();
-  final _formkeyusername = GlobalKey<FormState>();
+  static final _formkey = GlobalKey<FormState>();
+  static final _formkeyusername = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -100,12 +77,13 @@ class __AuthFormState extends State<_AuthForm> {
 
   @override
   Widget build(BuildContext context) {
+    final double baseWidth = MediaQuery.of(context).size.width - 100;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SvgPicture.asset(
           'assets/amazon-logo.svg',
-          width: widget.baseWidth,
+          width: baseWidth,
         ),
         Form(
             key: _formkeyusername,
@@ -114,11 +92,11 @@ class __AuthFormState extends State<_AuthForm> {
                 height: 40,
               ),
               SizedBox(
-                width: widget.baseWidth - 30,
+                width: baseWidth - 30,
                 child: TextFormField(
                   controller: usernameController,
                   decoration: const InputDecoration(
-                      icon: Icon(Icons.person), hintText: "Username"),
+                      icon: const Icon(Icons.person), hintText: "Username"),
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
                       return "Field Cannot be Empty";
@@ -134,7 +112,7 @@ class __AuthFormState extends State<_AuthForm> {
           child: Wrap(
             children: [
               SizedBox(
-                width: widget.baseWidth - 30,
+                width: baseWidth - 30,
                 child: TextFormField(
                   controller: emailController,
                   decoration: const InputDecoration(
@@ -149,7 +127,7 @@ class __AuthFormState extends State<_AuthForm> {
                 ),
               ),
               SizedBox(
-                width: widget.baseWidth - 30,
+                width: baseWidth - 30,
                 child: TextFormField(
                   controller: passwordController,
                   decoration: const InputDecoration(
@@ -190,7 +168,7 @@ class __AuthFormState extends State<_AuthForm> {
                   ),
                   style: ElevatedButton.styleFrom(
                       primary: Colors.yellow[500],
-                      fixedSize: Size(widget.baseWidth, 30)));
+                      fixedSize: Size(baseWidth, 30)));
             }
 
             return ElevatedButton(
@@ -210,7 +188,7 @@ class __AuthFormState extends State<_AuthForm> {
                 },
                 style: ElevatedButton.styleFrom(
                     primary: Colors.yellow[500],
-                    fixedSize: Size(widget.baseWidth, 30)));
+                    fixedSize: Size(baseWidth, 30)));
           },
         ),
         BlocConsumer<CredentialsBloc, CredentialsState>(
@@ -233,7 +211,7 @@ class __AuthFormState extends State<_AuthForm> {
                   ),
                   style: ElevatedButton.styleFrom(
                       primary: Colors.grey[300],
-                      fixedSize: Size(widget.baseWidth, 30)));
+                      fixedSize: Size(baseWidth, 30)));
             }
 
             return ElevatedButton(
@@ -245,17 +223,18 @@ class __AuthFormState extends State<_AuthForm> {
                   ),
                 ),
                 onPressed: () {
-                  final _loginState = _formkey.currentState;
-                  final _registerState = _formkeyusername.currentState;
+                  final _loginStateValidation =
+                      _formkey.currentState?.validate();
+                  final _registerStateValidation =
+                      _formkeyusername.currentState?.validate();
 
-                  if ((_loginState?.validate() ?? false) &&
-                      (_registerState?.validate() ?? false)) {
+                  if ((_loginStateValidation ?? false) &&
+                      (_registerStateValidation ?? false)) {
                     _registerButtonPressed(context);
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                    primary: Colors.grey[300],
-                    fixedSize: Size(widget.baseWidth, 30)));
+                    primary: Colors.grey[300], fixedSize: Size(baseWidth, 30)));
           },
         )
       ],

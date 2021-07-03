@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:amazon/blocs/authentication_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,11 +15,20 @@ class InitNavigator extends StatefulWidget {
 class _InitNavigatorState extends State<InitNavigator>
     with SingleTickerProviderStateMixin {
   late final TabController tabController;
+  late final int initialTab;
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 2, vsync: this);
+    if (user != null) {
+      initialTab = 1;
+    } else {
+      initialTab = 0;
+    }
+
+    tabController =
+        TabController(length: 2, vsync: this, initialIndex: initialTab);
   }
 
   @override
@@ -28,6 +38,7 @@ class _InitNavigatorState extends State<InitNavigator>
   }
 
   void loginTransition() {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (tabController.index != 1) {
       tabController.animateTo(1);
     }

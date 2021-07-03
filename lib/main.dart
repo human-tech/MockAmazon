@@ -13,19 +13,13 @@ import 'package:amazon/productsAPI/parsers/product_parser.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  final products =
+  final _products =
       await RequestProducts().executeGet<List<Product>>(const ProductParser());
 
-  runApp(
-    MultiProvider(
-      providers: [
-        Provider<FirebaseUserRepository>(
-            create: (_) => FirebaseUserRepository()),
-        Provider<ProductCache>(create: (_) => ProductCache(products))
-      ],
-      child: const MockAmazon(),
-    ),
-  );
+  runApp(MultiProvider(providers: [
+    Provider<FirebaseUserRepository>(create: (_) => FirebaseUserRepository()),
+    Provider<ProductCache>(create: (_) => ProductCache(_products))
+  ], child: MockAmazon()));
 }
 
 class MockAmazon extends StatelessWidget {
@@ -38,10 +32,32 @@ class MockAmazon extends StatelessWidget {
 
     return BlocProvider<AuthenticationBloc>(
       create: (_) => AuthenticationBloc(repository),
-      child: const MaterialApp(
-        initialRoute: RouteGenerator.initNavigator,
-        onGenerateRoute: RouteGenerator.generateRoute,
-        debugShowCheckedModeBanner: false,
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: const MaterialApp(
+          initialRoute: RouteGenerator.initNavigator,
+          onGenerateRoute: RouteGenerator.generateRoute,
+          debugShowCheckedModeBanner: false,
+        ),
+      ),
+    );
+  }
+}
+
+abstract class AppStartup {
+  static Future<List<Product>> setup() async {
+    return RequestProducts().executeGet<List<Product>>(const ProductParser());
+  }
+}
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }
