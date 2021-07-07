@@ -62,6 +62,10 @@ class __AuthFormState extends State<_AuthForm> {
         password: passwordController.text));
   }
 
+  void _anonymousButtonPressed(BuildContext context) {
+    BlocProvider.of<CredentialsBloc>(context).add(AnonymousLoginPressed());
+  }
+
   void _showSnackBar(BuildContext context, String message) {
     final snackbar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
@@ -233,6 +237,42 @@ class __AuthFormState extends State<_AuthForm> {
                     _registerButtonPressed(context);
                   }
                 },
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.grey[300], fixedSize: Size(baseWidth, 30)));
+          },
+        ),
+        BlocConsumer<CredentialsBloc, CredentialsState>(
+          listener: (context, state) {
+            if (state is CredentialsAnonymousFailure) {
+              _showSnackBar(context, "Anonymous Login Failed!");
+            }
+          },
+          builder: (context, state) {
+            if (state is CredentialsAnonymousLoading) {
+              return ElevatedButton(
+                  onPressed: () {},
+                  child: const SizedBox(
+                    child: const CircularProgressIndicator(
+                      color: Colors.black,
+                      strokeWidth: 2.0,
+                    ),
+                    height: 15,
+                    width: 15,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[300],
+                      fixedSize: Size(baseWidth, 30)));
+            }
+
+            return ElevatedButton(
+                child: const Text(
+                  "Sign in Anonymously",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black,
+                  ),
+                ),
+                onPressed: () => _anonymousButtonPressed(context),
                 style: ElevatedButton.styleFrom(
                     primary: Colors.grey[300], fixedSize: Size(baseWidth, 30)));
           },

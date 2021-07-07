@@ -23,5 +23,10 @@ class TestRepository extends UserRepository {
   }
 
   @override
+  Future<bool> anonymous() {
+    return Future<bool>.delayed(const Duration(seconds: 2), () => success);
+  }
+
+  @override
   Future<void> logOut() => Future.delayed(Duration(milliseconds: 50));
 }

@@ -6,9 +6,12 @@ class FirebaseUserRepository extends UserRepository {
   const FirebaseUserRepository();
 
   @override
-  String get userEmail => FirebaseAuth.instance.currentUser?.email ?? "-";
+  String get userEmail =>
+      FirebaseAuth.instance.currentUser?.email ?? "Anonymous";
 
-  String get username => FirebaseAuth.instance.currentUser?.displayName ?? "-";
+  @override
+  String get username =>
+      FirebaseAuth.instance.currentUser?.displayName ?? "Anonymous";
 
   @override
   Future<bool> authenticate(String email, String password) async {
@@ -31,6 +34,17 @@ class FirebaseUserRepository extends UserRepository {
 
       await FirebaseAuth.instance.currentUser?.updateDisplayName(username);
 
+      return true;
+    } on FirebaseAuthException catch (e) {
+      debugPrint(e.message);
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> anonymous() async {
+    try {
+      await FirebaseAuth.instance.signInAnonymously();
       return true;
     } on FirebaseAuthException catch (e) {
       debugPrint(e.message);

@@ -2,14 +2,13 @@ import 'package:equatable/equatable.dart';
 
 abstract class CredentialsEvents extends Equatable {
   final String? username;
-  final String email;
-  final String password;
+  final String? email;
+  final String? password;
 
-  const CredentialsEvents(
-      {this.username, required this.email, required this.password});
+  const CredentialsEvents({this.username, this.email, this.password});
 
   @override
-  List<Object> get props => [email, password];
+  List<Object> get props => [email ?? "", password ?? ""];
 }
 
 class LoginButtonPressed extends CredentialsEvents {
@@ -23,4 +22,8 @@ class RegisterButtonPressed extends CredentialsEvents {
       required String email,
       required String password})
       : super(username: username, email: email, password: password);
+}
+
+class AnonymousLoginPressed extends CredentialsEvents {
+  const AnonymousLoginPressed();
 }

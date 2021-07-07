@@ -19,10 +19,18 @@ class CredentialsRegisterLoading extends CredentialsState {
   const CredentialsRegisterLoading();
 }
 
+class CredentialsAnonymousLoading extends CredentialsState {
+  const CredentialsAnonymousLoading();
+}
+
 class CredentialsLoginFailure extends CredentialsState {
   const CredentialsLoginFailure();
 }
 
 class CredentialsRegisterFailure extends CredentialsState {
   const CredentialsRegisterFailure();
+}
+
+class CredentialsAnonymousFailure extends CredentialsState {
+  const CredentialsAnonymousFailure();
 }

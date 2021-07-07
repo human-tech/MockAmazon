@@ -9,5 +9,7 @@ abstract class UserRepository {
 
   Future<bool> register(String username, String email, String password);
 
+  Future<bool> anonymous();
+
   Future<void> logOut();
 }
