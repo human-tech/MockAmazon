@@ -43,22 +43,3 @@ class MockAmazon extends StatelessWidget {
     );
   }
 }
-
-abstract class AppStartup {
-  static Future<List<Product>> setup() async {
-    return RequestProducts().executeGet<List<Product>>(const ProductParser());
-  }
-}
-
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-}
